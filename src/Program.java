@@ -30,6 +30,8 @@ public class Program
      */
     public static void main(final String... args)
     {
+	final ManeFrame frame = new ManeFrame();
+	frame.setVisible(true);
     }
     
 }
