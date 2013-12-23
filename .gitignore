@@ -25,12 +25,18 @@ _/
 *.ps
 *.dvi
 *.aux
-*.cp
-*.fn
-*.ky
 *.log
-*.pg
 *.toc
+*.cp
+*.cps
+*.fn
+*.fns
+*.ky
+*.kys
+*.pg
+*.pgs
 *.tp
+*.tps
 *.vr
+*.vrs
 
