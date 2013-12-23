@@ -52,7 +52,7 @@ public class ActivityColour
     /**
      * Cache for already calculated colours
      */
-    private static Color cache[1024];
+    private static Color[] cache = new Color[1024];
     
 }
 
