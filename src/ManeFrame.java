@@ -36,23 +36,42 @@ public class ManeFrame extends JFrame
 	this.pack();
 	this.setLayout(new BorderLayout());
 	
-	final JScrollPane left_scroll   = new JScrollPane(new JPanel(),
-							  JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
+	final JScrollPane left_scroll = new JScrollPane(new JPanel(),
+							JScrollPane.  VERTICAL_SCROLLBAR_ALWAYS,
+							JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+	final JScrollPane top_scroll  = new JScrollPane(new JPanel(),
+							JScrollPane.  VERTICAL_SCROLLBAR_ALWAYS,
+							JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+	
+	final JScrollPane years_scroll  = new JScrollPane(new JPanel(),
+							  JScrollPane.  VERTICAL_SCROLLBAR_AS_NEEDED,
 							  JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-	final JScrollPane top_scroll    = new JScrollPane(new JPanel(),
-							  JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
+	final JScrollPane months_scroll = new JScrollPane(new JPanel(),
+							  JScrollPane.  VERTICAL_SCROLLBAR_AS_NEEDED,
 							  JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-	final JScrollPane bottom_scroll = new JScrollPane(new JPanel(),
-							  JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
+	final JScrollPane days_scroll   = new JScrollPane(new JPanel(),
+							  JScrollPane.  VERTICAL_SCROLLBAR_AS_NEEDED,
 							  JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+	final JScrollPane hours_scroll  = new JScrollPane(new JPanel(),
+							  JScrollPane.  VERTICAL_SCROLLBAR_AS_NEEDED,
+							  JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+	final JScrollPane filter_scroll = new JScrollPane(new JPanel(),
+							  JScrollPane.  VERTICAL_SCROLLBAR_AS_NEEDED,
+							  JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+	
+	final JTabbedPane bottom_tabs = new JTabbedPane(JTabbedPane.BOTTOM, JTabbedPane.SCROLL_TAB_LAYOUT);
+	bottom_tabs.add("Years",   years_scroll);
+	bottom_tabs.add("Months", months_scroll);
+	bottom_tabs.add("Days",     days_scroll);
+	bottom_tabs.add("Hours",   hours_scroll);
+	bottom_tabs.add("Filter", filter_scroll);
 	
 	left_scroll.setBorder(null);
 	top_scroll.setBorder(null);
-	bottom_scroll.setBorder(null);
 	
 	final JSplitPane vsplit = new JSplitPane(JSplitPane.VERTICAL_SPLIT);
 	vsplit.setTopComponent(top_scroll);
-	vsplit.setBottomComponent(bottom_scroll);
+	vsplit.setBottomComponent(bottom_tabs);
 	vsplit.setBorder(null);
 	vsplit.setDividerLocation(0.8);
 	vsplit.setResizeWeight(0.8);
