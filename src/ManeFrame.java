@@ -43,7 +43,7 @@ public class ManeFrame extends JFrame
 							JScrollPane.  VERTICAL_SCROLLBAR_ALWAYS,
 							JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 	
-	final JScrollPane years_scroll  = new JScrollPane(new JPanel(),
+	final JScrollPane years_scroll  = new JScrollPane(new YearFilter(),
 							  JScrollPane.  VERTICAL_SCROLLBAR_AS_NEEDED,
 							  JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 	final JScrollPane months_scroll = new JScrollPane(new JPanel(),
