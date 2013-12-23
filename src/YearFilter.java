@@ -65,7 +65,8 @@ public class YearFilter extends JComponent implements MouseInputListener
 	this.addMouseListener(this);
 	this.addMouseMotionListener(this);
 	
-	final int x = MARGIN * 2 + Math.max(this.selected.length, 1) * (BOX_WIDTH + BOX_GAP) - BOX_GAP;
+	final int x_ = Math.max(this.selected.length, 1);
+	final int x = MARGIN * 2 + BOX_WIDTH  + BIG_GAP + x_ * (BOX_WIDTH  + BOX_GAP) - BOX_GAP;
 	final int y = MARGIN * 2 + BOX_HEIGHT + BIG_GAP + 12 * (BOX_HEIGHT + BOX_GAP) - BOX_GAP;
 	this.setPreferredSize(new Dimension(x, y));
     }
@@ -75,7 +76,7 @@ public class YearFilter extends JComponent implements MouseInputListener
     /**
      * Mask for selected elements; of same length as the number of years
      */
-    private short[] selected = new short[50];
+    private short[] selected = new short[10];
     
     /**
      * Mask for fully selected months
@@ -119,13 +120,13 @@ public class YearFilter extends JComponent implements MouseInputListener
 	
 	g.setColor(ActivityColour.get(selected, hovered, 0.5));
 	g.fillRect(MARGIN, MARGIN, BOX_WIDTH, BOX_HEIGHT);
-	    
+	
 	for (int y = y1; y < y2; y++)
 	{
 	    final int Y = y * (BOX_HEIGHT + BOX_GAP) + BOX_HEIGHT + BIG_GAP + MARGIN;
 	    
-	    hovered = (this.hover == y + 1);
-	    hovered |= (this.hover == 0);
+	    hovered  = this.hover == y + 1;
+	    hovered |= this.hover == 0;
 	    selected = (this.m_selected & (1 << y)) != 0;
 	    
 	    g.setColor(ActivityColour.get(selected, hovered, 0.5));
@@ -136,8 +137,8 @@ public class YearFilter extends JComponent implements MouseInputListener
 	{
 	    final int X = x * (BOX_WIDTH + BOX_GAP) + BOX_WIDTH + BIG_GAP + MARGIN;
 	    
-	    hovered = this.hover == (x + 1) * 13;
-	    hovered |= (this.hover == 0);
+	    hovered  = this.hover == (x + 1) * 13;
+	    hovered |= this.hover == 0;
 	    selected = (this.selected[x] & (1 << 12) - 1) == (1 << 12) - 1;
 	    
 	    g.setColor(ActivityColour.get(selected, hovered, 0.5));
@@ -147,18 +148,16 @@ public class YearFilter extends JComponent implements MouseInputListener
 	    {
 		final int Y = y * (BOX_HEIGHT + BOX_GAP) + BOX_HEIGHT + BIG_GAP + MARGIN;
 		
-		hovered = (this.hover == (x + 1) * 13 + y + 1);
-		hovered |= (this.hover == (x + 1) * 13);
-		hovered |= (this.hover == y + 1);
-		hovered |= (this.hover == 0);
+		hovered  = this.hover == (x + 1) * 13 + y + 1;
+		hovered |= this.hover == (x + 1) * 13;
+		hovered |= this.hover == y + 1;
+		hovered |= this.hover == 0;
 		selected = (this.selected[x] & (1 << y)) != 0;
 		
 		g.setColor(ActivityColour.get(selected, hovered, 0.5));
 		g.fillRect(X, Y, BOX_WIDTH, BOX_HEIGHT);
 	    }
 	}
-	
-	super.paint(g);
     }
     
     
