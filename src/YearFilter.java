@@ -17,14 +17,16 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 import javax.swing.*;
+import javax.swing.event.*;
 import java.awt.*;
+import java.awt.event.*;
 
 
 /**
  * Year filter component
  */
 @SuppressWarnings("serial")
-public class YearFilter extends JComponent
+public class YearFilter extends JComponent implements MouseInputListener
 {
     /**
      * The width of a box
@@ -42,9 +44,9 @@ public class YearFilter extends JComponent
     private static final int BOX_GAP = 2;
     
     /**
-     * The big box gap
+     * The big box gaps
      */
-    private static final int BIG_GAP = 16;
+    private static final int BIG_GAP = 14;
     
     /**
      * The margins
@@ -60,7 +62,10 @@ public class YearFilter extends JComponent
     {
 	this.setBackground(Color.WHITE);
 	
-	final int x = MARGIN * 2 + Math.max(this.years, 1) * (BOX_WIDTH + BOX_GAP) - BOX_GAP;
+	this.addMouseListener(this);
+	this.addMouseMotionListener(this);
+	
+	final int x = MARGIN * 2 + Math.max(this.selected.length, 1) * (BOX_WIDTH + BOX_GAP) - BOX_GAP;
 	final int y = MARGIN * 2 + BOX_HEIGHT + BIG_GAP + 12 * (BOX_HEIGHT + BOX_GAP) - BOX_GAP;
 	this.setPreferredSize(new Dimension(x, y));
     }
@@ -68,9 +73,19 @@ public class YearFilter extends JComponent
     
     
     /**
-     * The number of years
+     * Mask for selected elements; of same length as the number of years
      */
-    private int years = 50;
+    private short[] selected = new short[50];
+    
+    /**
+     * Mask for fully selected months
+     */
+    private short m_selected = 0;
+    
+    /**
+     * The index of the hovered element, -1 if none
+     */
+    private int hover = -1;
     
     
     
@@ -85,28 +100,60 @@ public class YearFilter extends JComponent
 	
 	final Rectangle rect = g.getClipBounds();
 	
-	int x1 = (rect.x - MARGIN) / (BOX_WIDTH  + BOX_GAP);
-	int y1 = (rect.y - MARGIN) / (BOX_HEIGHT + BOX_GAP);
+	int x1 = (rect.x - MARGIN - BOX_WIDTH  - BIG_GAP) / (BOX_WIDTH  + BOX_GAP);
+	int y1 = (rect.y - MARGIN - BOX_HEIGHT - BIG_GAP) / (BOX_HEIGHT + BOX_GAP);
 	
 	int x2 = rect.x + rect.width  - MARGIN - BOX_WIDTH;
 	int y2 = rect.y + rect.height - MARGIN - BOX_HEIGHT;
 	x2 = (x2 + BOX_WIDTH  + BOX_GAP - 1) / BOX_WIDTH  + BOX_GAP;
 	y2 = (y2 + BOX_HEIGHT + BOX_GAP - 1) / BOX_HEIGHT + BOX_GAP;
 	
-	if (x1 < 0)           x1 = 0;
-	if (y1 < 0)           y1 = 0;
-	if (x2 > this.years)  x2 = this.years;
-	if (y2 > 12)          y2 = 12;
+	final int years = this.selected.length;
+	if (x1 < 0)      x1 = 0;
+	if (y1 < 0)      y1 = 0;
+	if (x2 > years)  x2 = years;
+	if (y2 > 12)     y2 = 12;
 	
-	g.setColor(ActivityColour.normal.get(0.5));
+	boolean hovered = this.hover == 0;
+	boolean selected = (this.m_selected & (1 << 12) - 1) == (1 << 12) - 1;
+	
+	g.setColor(ActivityColour.get(selected, hovered, 0.5));
+	g.fillRect(MARGIN, MARGIN, BOX_WIDTH, BOX_HEIGHT);
+	    
+	for (int y = y1; y < y2; y++)
+	{
+	    final int Y = y * (BOX_HEIGHT + BOX_GAP) + BOX_HEIGHT + BIG_GAP + MARGIN;
+	    
+	    hovered = (this.hover == y + 1);
+	    hovered |= (this.hover == 0);
+	    selected = (this.m_selected & (1 << y)) != 0;
+	    
+	    g.setColor(ActivityColour.get(selected, hovered, 0.5));
+	    g.fillRect(MARGIN, Y, BOX_WIDTH, BOX_HEIGHT);
+	}
+	
 	for (int x = x1; x < x2; x++)
 	{
-	    final int X = x * (BOX_WIDTH + BOX_GAP) + MARGIN;
+	    final int X = x * (BOX_WIDTH + BOX_GAP) + BOX_WIDTH + BIG_GAP + MARGIN;
+	    
+	    hovered = this.hover == (x + 1) * 13;
+	    hovered |= (this.hover == 0);
+	    selected = (this.selected[x] & (1 << 12) - 1) == (1 << 12) - 1;
+	    
+	    g.setColor(ActivityColour.get(selected, hovered, 0.5));
 	    g.fillRect(X, MARGIN, BOX_WIDTH, BOX_HEIGHT);
 	    
 	    for (int y = y1; y < y2; y++)
 	    {
 		final int Y = y * (BOX_HEIGHT + BOX_GAP) + BOX_HEIGHT + BIG_GAP + MARGIN;
+		
+		hovered = (this.hover == (x + 1) * 13 + y + 1);
+		hovered |= (this.hover == (x + 1) * 13);
+		hovered |= (this.hover == y + 1);
+		hovered |= (this.hover == 0);
+		selected = (this.selected[x] & (1 << y)) != 0;
+		
+		g.setColor(ActivityColour.get(selected, hovered, 0.5));
 		g.fillRect(X, Y, BOX_WIDTH, BOX_HEIGHT);
 	    }
 	}
@@ -114,6 +161,168 @@ public class YearFilter extends JComponent
 	super.paint(g);
     }
     
+    
+    /**
+     * {@inheritDoc}
+     */
+    public void mouseClicked(final MouseEvent e)
+    {
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    public void mouseEntered(final MouseEvent e)
+    {
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    public void mouseExited(final MouseEvent e)
+    {
+	if (this.hover >= 0)
+	{
+	    this.hover = -1;
+	    this.repaint();
+	}
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    public void mousePressed(final MouseEvent e)
+    {
+	final int hover = calculateHover(e.getPoint());
+	if (hover >= 0)
+	{
+	    final int x = (hover / 13) - 1;
+	    final int y = (hover % 13) - 1;
+	    if (x < 0)
+	    {
+		final boolean selected;
+		if (y < 0)
+		{
+		    selected = (this.m_selected & (1 << 12) - 1) == (1 << 12) - 1;
+		    this.m_selected = (short)(selected ? 0 : (1 << 12) - 1);
+		}
+		else
+		{
+		    selected = (this.m_selected & 1 << y) != 0;
+		    this.m_selected ^= 1 << y;
+		}
+		for (int i = 0, n = this.selected.length; i < n; i++)
+		    if (y < 0)
+			if (selected)
+			    this.selected[i] = 0;
+			else
+			    this.selected[i] |= (1 << 12) - 1;
+		    else
+			if (selected)
+			    this.selected[i] &= ~(1 << y);
+			else
+			    this.selected[i] |= 1 << y;
+		this.repaint();
+	    }
+	    else if (x < this.selected.length)
+	    {
+		int m1 = -1, m2 = -2;
+		if (y < 0)
+		    if (this.selected[x] == (1 << 12) - 1)
+			this.selected[x] = this.m_selected = 0;
+		    else
+		    {
+			this.selected[x] = (1 << 12) - 1;
+			m1 = 0;
+			m2 = 11;
+		    }
+		else
+		    this.selected[x] ^= 1 << (m1 = m2 = y);
+		if (m2 >= m1)
+		    for (int m = 1 << m1; m <= 1 << m2; m <<= 1)
+		    {
+			int count = 0, n = this.selected.length;
+			for (int year = 0; year < n; year++)
+			    if ((this.selected[year] & m) == m)
+				count++;
+			this.m_selected = (short)((this.m_selected & ~m) | (count == n ? m : 0));
+		    }
+		this.repaint();
+	    }
+	}
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    public void mouseReleased(final MouseEvent e)
+    {
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    public void mouseDragged(final MouseEvent e)
+    {
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    public void mouseMoved(final MouseEvent e)
+    {
+	final int hover = calculateHover(e.getPoint());
+	if (hover != this.hover)
+	{
+	    this.hover = hover;
+	    this.repaint();
+	}
+    }
+    
+    /**
+     * Get the index of the hovered element
+     * 
+     * @param   point  The position of the rat
+     * @return         The index of the hovered element, -1 if none
+     */
+    private static int calculateHover(final Point point)
+    {
+	int hover = -1;
+	
+	int x = point.x - MARGIN - BOX_WIDTH  - BIG_GAP;
+	int y = point.y - MARGIN - BOX_HEIGHT - BIG_GAP;
+	
+	if (x < 0)
+	{
+	    x = point.x - MARGIN;
+	    if ((x < 0) || (x >= BOX_WIDTH))
+		x = -1;
+	    else
+		x = 0;
+	}
+	else if (x % (BOX_WIDTH + BOX_GAP) >= BOX_WIDTH)
+	    x = -1;
+	else
+	    x = x / (BOX_WIDTH + BOX_GAP) + 1;
+	
+	if (y < 0)
+	{
+	    y = point.y - MARGIN;
+	    if ((y < 0) || (y >= BOX_HEIGHT))
+		y = -1;
+	    else
+		y = 0;
+	}
+	else if (y % (BOX_HEIGHT + BOX_GAP) >= BOX_WIDTH)
+	    y = -1;
+	else
+	    y = y / (BOX_HEIGHT + BOX_GAP) + 1;
+	
+	if ((x >= 0) && (y >= 0) && (y < 13))
+	    hover = x * 13 + y;
+	
+	return hover;
+    }
     
 }
 

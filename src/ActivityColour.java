@@ -43,17 +43,17 @@ public class ActivityColour
     /**
      * Colours for activity boxes in normal state but hovered
      */
-    public static ActivityColour normal_hover = new ActivityColour(115);
+    public static ActivityColour normal_hover = new ActivityColour(85 + 50);
     
     /**
      * Colours for activity boxes in selected state
      */
-    public static ActivityColour selected = new ActivityColour(185);
+    public static ActivityColour selected = new ActivityColour(285);
     
     /**
      * Colours for activity boxes in selected state and hovered
      */
-    public static ActivityColour selected_hover = new ActivityColour(155);
+    public static ActivityColour selected_hover = new ActivityColour(285 - 50);
     
     
     
@@ -90,6 +90,25 @@ public class ActivityColour
 	double lum = 0.75 - 0.20 * x;
 	double sat = 0.1 + 0.4 * x;
 	return this.cache[descrete] = (new Colour(lum, sat, this.hue)).srgb;
+    }
+    
+    
+    /**
+     * Get the colour representing an activity intensity
+     * 
+     * @param   selected  Whether the representation element is selected
+     * @param   hovered   Whether the representation element is hovered
+     * @param   activity  Activity intensity [0, 1]
+     * @return            The colour
+     */
+    public static Color get(final boolean selected, final boolean hovered, final double activity)
+    {
+	if (hovered)
+	    if (selected)  return ActivityColour.selected_hover.get(activity);
+	    else           return ActivityColour.  normal_hover.get(activity);
+	else
+	    if (selected)  return ActivityColour.selected.get(activity);
+	    else           return ActivityColour.  normal.get(activity);
     }
     
 }
