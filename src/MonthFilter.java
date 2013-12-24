@@ -162,7 +162,7 @@ public class MonthFilter extends JComponent implements MouseInputListener
 	boolean hovered = (this.hover == 0) || (this.hover == year << 9);
 	boolean selected = (this.m_selected[year] & (1 << 12) - 1) == (1 << 12) - 1;
 	
-	g.setColor(ActivityColour.get(selected, hovered, 0.0));
+	g.setColor(ActivityColour.get(selected, hovered, 1.0));
 	g.fillRect(MARGIN, y_offset, BOX_WIDTH, BOX_HEIGHT);
 	
 	for (int y = y1; y < y2; y++)
@@ -175,7 +175,7 @@ public class MonthFilter extends JComponent implements MouseInputListener
 	    hovered |= this.hover == year << 9;
 	    selected = (this.m_selected[year] & (1 << y)) != 0;
 	    
-	    g.setColor(ActivityColour.get(selected, hovered, 0.0));
+	    g.setColor(ActivityColour.get(selected, hovered, 1.0));
 	    g.fillRect(MARGIN, Y + y_offset, BOX_WIDTH, BOX_HEIGHT);
 	}
 	
@@ -189,7 +189,7 @@ public class MonthFilter extends JComponent implements MouseInputListener
 	    hovered |= this.hover == year << 9;
 	    selected = (this.selected[year][x] & (1 << 12) - 1) == (1 << 12) - 1;
 	    
-	    g.setColor(ActivityColour.get(selected, hovered, 0.0));
+	    g.setColor(ActivityColour.get(selected, hovered, 1.0));
 	    g.fillRect(X, y_offset, BOX_WIDTH, BOX_HEIGHT);
 	    
 	    for (int y = y1; y < y2; y++)
@@ -209,7 +209,7 @@ public class MonthFilter extends JComponent implements MouseInputListener
 		hovered |= this.hover == year << 9;
 		selected = (this.selected[year][x] & (1 << y)) != 0;
 		
-		g.setColor(ActivityColour.get(selected, hovered, 0.0));
+		g.setColor(ActivityColour.get(selected, hovered, 1.0));
 		g.fillRect(X, Y + y_offset, BOX_WIDTH, BOX_HEIGHT);
 	    }
 	}

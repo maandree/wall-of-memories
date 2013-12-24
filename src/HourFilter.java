@@ -118,7 +118,7 @@ public class HourFilter extends JComponent implements MouseInputListener
 	boolean hovered = this.hover == 0;
 	boolean selected = (this.m_selected & (1 << 7) - 1) == (1 << 7) - 1;
 	
-	g.setColor(ActivityColour.get(selected, hovered, 0.0));
+	g.setColor(ActivityColour.get(selected, hovered, 1.0));
 	g.fillRect(MARGIN, MARGIN, BOX_WIDTH, BOX_HEIGHT);
 	
 	for (int y = y1; y < y2; y++)
@@ -129,7 +129,7 @@ public class HourFilter extends JComponent implements MouseInputListener
 	    hovered |= this.hover == 0;
 	    selected = (this.m_selected & (1 << y)) != 0;
 	    
-	    g.setColor(ActivityColour.get(selected, hovered, 0.0));
+	    g.setColor(ActivityColour.get(selected, hovered, 1.0));
 	    g.fillRect(MARGIN, Y, BOX_WIDTH, BOX_HEIGHT);
 	}
 	
@@ -141,7 +141,7 @@ public class HourFilter extends JComponent implements MouseInputListener
 	    hovered |= this.hover == 0;
 	    selected = (this.selected[x] & (1 << 7) - 1) == (1 << 7) - 1;
 	    
-	    g.setColor(ActivityColour.get(selected, hovered, 0.0));
+	    g.setColor(ActivityColour.get(selected, hovered, 1.0));
 	    g.fillRect(X, MARGIN, BOX_WIDTH, BOX_HEIGHT);
 	    
 	    for (int y = y1; y < y2; y++)
@@ -154,7 +154,7 @@ public class HourFilter extends JComponent implements MouseInputListener
 		hovered |= this.hover == 0;
 		selected = (this.selected[x] & 1 << y) == 1 << y;
 		
-		g.setColor(ActivityColour.get(selected, hovered, 0.0));
+		g.setColor(ActivityColour.get(selected, hovered, 1.0));
 		g.fillRect(X, Y, BOX_WIDTH, BOX_HEIGHT);
 	    }
 	}
