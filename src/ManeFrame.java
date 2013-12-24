@@ -55,7 +55,7 @@ public class ManeFrame extends JFrame
 	final JScrollPane hours_scroll  = new JScrollPane(new HourFilter(),
 							  JScrollPane.  VERTICAL_SCROLLBAR_AS_NEEDED,
 							  JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-	final JScrollPane filter_scroll = new JScrollPane(new JPanel(),
+	final JScrollPane filter_scroll = new JScrollPane(new ManeFilter(),
 							  JScrollPane.  VERTICAL_SCROLLBAR_AS_NEEDED,
 							  JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 	
