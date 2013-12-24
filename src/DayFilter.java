@@ -23,10 +23,10 @@ import java.awt.event.*;
 
 
 /**
- * Year filter component
+ * Day filter component
  */
 @SuppressWarnings("serial")
-public class YearFilter extends JComponent implements MouseInputListener
+public class DayFilter extends JComponent implements MouseInputListener
 {
     /**
      * The width of a box
@@ -58,7 +58,7 @@ public class YearFilter extends JComponent implements MouseInputListener
     /**
      * Constructor
      */
-    public YearFilter()
+    public DayFilter()
     {
 	this.setBackground(Color.WHITE);
 	
@@ -67,21 +67,21 @@ public class YearFilter extends JComponent implements MouseInputListener
 	
 	final int x_ = Math.max(this.selected.length, 1);
 	final int x = MARGIN * 2 + BOX_WIDTH  + BIG_GAP + x_ * (BOX_WIDTH  + BOX_GAP) - BOX_GAP;
-	final int y = MARGIN * 2 + BOX_HEIGHT + BIG_GAP + 12 * (BOX_HEIGHT + BOX_GAP) - BOX_GAP;
+	final int y = MARGIN * 2 + BOX_HEIGHT + BIG_GAP + 7  * (BOX_HEIGHT + BOX_GAP) - BOX_GAP;
 	this.setPreferredSize(new Dimension(x, y));
     }
     
     
     
     /**
-     * Mask for selected elements; of same length as the number of years
+     * Mask for selected elements; of same length as the number of weeks
      */
-    private short[] selected = new short[10];
+    private byte[] selected = new byte[144];
     
     /**
-     * Mask for fully selected months
+     * Mask for fully selected weekdays
      */
-    private short m_selected = 0;
+    private byte m_selected = 0;
     
     /**
      * The index of the hovered element, -1 if none
@@ -109,14 +109,14 @@ public class YearFilter extends JComponent implements MouseInputListener
 	x2 = (x2 + BOX_WIDTH  + BOX_GAP - 1) / BOX_WIDTH  + BOX_GAP;
 	y2 = (y2 + BOX_HEIGHT + BOX_GAP - 1) / BOX_HEIGHT + BOX_GAP;
 	
-	final int years = this.selected.length;
+	final int weeks = this.selected.length;
 	if (x1 < 0)      x1 = 0;
 	if (y1 < 0)      y1 = 0;
-	if (x2 > years)  x2 = years;
-	if (y2 > 12)     y2 = 12;
+	if (x2 > weeks)  x2 = weeks;
+	if (y2 > 7)      y2 = 7;
 	
 	boolean hovered = this.hover == 0;
-	boolean selected = (this.m_selected & (1 << 12) - 1) == (1 << 12) - 1;
+	boolean selected = (this.m_selected & (1 << 7) - 1) == (1 << 7) - 1;
 	
 	g.setColor(ActivityColour.get(selected, hovered, 0.0));
 	g.fillRect(MARGIN, MARGIN, BOX_WIDTH, BOX_HEIGHT);
@@ -137,9 +137,9 @@ public class YearFilter extends JComponent implements MouseInputListener
 	{
 	    final int X = x * (BOX_WIDTH + BOX_GAP) + BOX_WIDTH + BIG_GAP + MARGIN;
 	    
-	    hovered  = this.hover == (x + 1) * 13;
+	    hovered  = this.hover == (x + 1) * 8;
 	    hovered |= this.hover == 0;
-	    selected = (this.selected[x] & (1 << 12) - 1) == (1 << 12) - 1;
+	    selected = (this.selected[x] & (1 << 7) - 1) == (1 << 7) - 1;
 	    
 	    g.setColor(ActivityColour.get(selected, hovered, 0.0));
 	    g.fillRect(X, MARGIN, BOX_WIDTH, BOX_HEIGHT);
@@ -148,11 +148,11 @@ public class YearFilter extends JComponent implements MouseInputListener
 	    {
 		final int Y = y * (BOX_HEIGHT + BOX_GAP) + BOX_HEIGHT + BIG_GAP + MARGIN;
 		
-		hovered  = this.hover == (x + 1) * 13 + y + 1;
-		hovered |= this.hover == (x + 1) * 13;
+		hovered  = this.hover == (x + 1) * 8 + y + 1;
+		hovered |= this.hover == (x + 1) * 8;
 		hovered |= this.hover == y + 1;
 		hovered |= this.hover == 0;
-		selected = (this.selected[x] & (1 << y)) != 0;
+		selected = (this.selected[x] & 1 << y) == 1 << y;
 		
 		g.setColor(ActivityColour.get(selected, hovered, 0.0));
 		g.fillRect(X, Y, BOX_WIDTH, BOX_HEIGHT);
@@ -195,15 +195,15 @@ public class YearFilter extends JComponent implements MouseInputListener
 	final int hover = calculateHover(e.getPoint());
 	if (hover >= 0)
 	{
-	    final int x = (hover / 13) - 1;
-	    final int y = (hover % 13) - 1;
+	    final int x = (hover / 8) - 1;
+	    final int y = (hover % 8) - 1;
 	    if (x < 0)
 	    {
 		final boolean selected;
 		if (y < 0)
 		{
-		    selected = (this.m_selected & (1 << 12) - 1) == (1 << 12) - 1;
-		    this.m_selected = (short)(selected ? 0 : (1 << 12) - 1);
+		    selected = (this.m_selected & (1 << 7) - 1) == (1 << 7) - 1;
+		    this.m_selected = (byte)(selected ? 0 : (1 << 7) - 1);
 		}
 		else
 		{
@@ -215,7 +215,7 @@ public class YearFilter extends JComponent implements MouseInputListener
 			if (selected)
 			    this.selected[i] = 0;
 			else
-			    this.selected[i] |= (1 << 12) - 1;
+			    this.selected[i] |= (1 << 7) - 1;
 		    else
 			if (selected)
 			    this.selected[i] &= ~(1 << y);
@@ -227,13 +227,13 @@ public class YearFilter extends JComponent implements MouseInputListener
 	    {
 		int m1 = -1, m2 = -2;
 		if (y < 0)
-		    if (this.selected[x] == (1 << 12) - 1)
+		    if (this.selected[x] == (1 << 7) - 1)
 			this.selected[x] = this.m_selected = 0;
 		    else
 		    {
-			this.selected[x] = (1 << 12) - 1;
+			this.selected[x] = (1 << 7) - 1;
 			m1 = 0;
-			m2 = 11;
+			m2 = 6;
 		    }
 		else
 		    this.selected[x] ^= 1 << (m1 = m2 = y);
@@ -241,10 +241,10 @@ public class YearFilter extends JComponent implements MouseInputListener
 		    for (int m = 1 << m1; m <= 1 << m2; m <<= 1)
 		    {
 			int count = 0, n = this.selected.length;
-			for (int year = 0; year < n; year++)
-			    if ((this.selected[year] & m) == m)
+			for (int week = 0; week < n; week++)
+			    if ((this.selected[week] & m) == m)
 				count++;
-			this.m_selected = (short)((this.m_selected & ~m) | (count == n ? m : 0));
+			this.m_selected = (byte)((this.m_selected & ~m) | (count == n ? m : 0));
 		    }
 		this.repaint();
 	    }
@@ -317,8 +317,8 @@ public class YearFilter extends JComponent implements MouseInputListener
 	else
 	    y = y / (BOX_HEIGHT + BOX_GAP) + 1;
 	
-	if ((x >= 0) && (y >= 0) && (y < 13))
-	    hover = x * 13 + y;
+	if ((x >= 0) && (y >= 0) && (y < 8))
+	    hover = x * 8 + y;
 	
 	return hover;
     }
