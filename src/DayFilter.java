@@ -81,7 +81,7 @@ public class DayFilter extends JComponent implements MouseInputListener
     /**
      * Mask for fully selected weekdays
      */
-    private byte m_selected = 0;
+    private byte d_selected = 0;
     
     /**
      * The index of the hovered element, -1 if none
@@ -116,7 +116,7 @@ public class DayFilter extends JComponent implements MouseInputListener
 	if (y2 > 7)      y2 = 7;
 	
 	boolean hovered = this.hover == 0;
-	boolean selected = (this.m_selected & (1 << 7) - 1) == (1 << 7) - 1;
+	boolean selected = (this.d_selected & (1 << 7) - 1) == (1 << 7) - 1;
 	
 	g.setColor(ActivityColour.get(selected, hovered, 1.0));
 	g.fillRect(MARGIN, MARGIN, BOX_WIDTH, BOX_HEIGHT);
@@ -127,7 +127,7 @@ public class DayFilter extends JComponent implements MouseInputListener
 	    
 	    hovered  = this.hover == y + 1;
 	    hovered |= this.hover == 0;
-	    selected = (this.m_selected & (1 << y)) != 0;
+	    selected = (this.d_selected & (1 << y)) != 0;
 	    
 	    g.setColor(ActivityColour.get(selected, hovered, 1.0));
 	    g.fillRect(MARGIN, Y, BOX_WIDTH, BOX_HEIGHT);
@@ -202,13 +202,13 @@ public class DayFilter extends JComponent implements MouseInputListener
 		final boolean selected;
 		if (y < 0)
 		{
-		    selected = (this.m_selected & (1 << 7) - 1) == (1 << 7) - 1;
-		    this.m_selected = (byte)(selected ? 0 : (1 << 7) - 1);
+		    selected = (this.d_selected & (1 << 7) - 1) == (1 << 7) - 1;
+		    this.d_selected = (byte)(selected ? 0 : (1 << 7) - 1);
 		}
 		else
 		{
-		    selected = (this.m_selected & 1 << y) != 0;
-		    this.m_selected ^= 1 << y;
+		    selected = (this.d_selected & 1 << y) != 0;
+		    this.d_selected ^= 1 << y;
 		}
 		for (int i = 0, n = this.selected.length; i < n; i++)
 		    if (y < 0)
@@ -228,7 +228,7 @@ public class DayFilter extends JComponent implements MouseInputListener
 		int m1 = -1, m2 = -2;
 		if (y < 0)
 		    if (this.selected[x] == (1 << 7) - 1)
-			this.selected[x] = this.m_selected = 0;
+			this.selected[x] = this.d_selected = 0;
 		    else
 		    {
 			this.selected[x] = (1 << 7) - 1;
@@ -244,7 +244,7 @@ public class DayFilter extends JComponent implements MouseInputListener
 			for (int week = 0; week < n; week++)
 			    if ((this.selected[week] & m) == m)
 				count++;
-			this.m_selected = (byte)((this.m_selected & ~m) | (count == n ? m : 0));
+			this.d_selected = (byte)((this.d_selected & ~m) | (count == n ? m : 0));
 		    }
 		this.repaint();
 	    }

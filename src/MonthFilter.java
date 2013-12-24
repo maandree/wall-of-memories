@@ -95,12 +95,12 @@ public class MonthFilter extends JComponent implements MouseInputListener
     /**
      * Mask for selected days, for each year
      */
-    private short[][] selected = new short[11][31];
+    private short[][] selected = new short[3][31];
     
     /**
      * Mask for fully selected months, for each year
      */
-    private short[] m_selected = new short[11];
+    private short[] m_selected = new short[3];
     
     /**
      * The first year with activity
