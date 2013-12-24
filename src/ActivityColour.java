@@ -88,7 +88,7 @@ public class ActivityColour
 	
 	double x = descrete / 1024.;
 	double lum = 0.75 - 0.20 * x;
-	double sat = 0.1 + 0.4 * x;
+	double sat = 0.025 + 0.475 * x;
 	return this.cache[descrete] = (new Colour(lum, sat, this.hue)).srgb;
     }
     
