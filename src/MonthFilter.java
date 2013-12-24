@@ -258,81 +258,182 @@ public class MonthFilter extends JComponent implements MouseInputListener
 	if (hover >= 0)
 	{
 	    final int z = hover >> 9;
-	    final int z1 = z != 0 ? z     : 0;
-	    final int z2 = z != 0 ? z + 1 : this.m_selected.length;
 	    hover &= 511;
 	    final int x = (hover / 13) - 1;
 	    final int y = (hover % 13) - 1;
+	    
+	    leapYearFix(z);
+	    if (x >= (y == -1 ? this.selected[z].length : DAYS[y]))
+		return;
+	    
+	    fixEnds();
+	    
+	    clickYear(x, y, z);
+	    if (z == 0)
+		clickedAllYears(x, y);
+	    else
+	    {
+		for (int j = 0; j < this.selected[0].length; j++)
+		{
+		    short m = (1 << 12) - 1;
+		    for (int i = 1; i < this.m_selected.length; i++)
+			m &= this.selected[i][j];
+		    this.selected[0][j] = m;
+		}
+		short m = (1 << 12) - 1;
+		for (int i = 1; i < this.m_selected.length; i++)
+		    m &= this.m_selected[i];
+		this.m_selected[0] = m;
+	    }
+	    
+	    this.repaint();
+	}
+    }
+    
+    /**
+     * Propagate changes to all years
+     * 
+     * @param  x  The local variable <tt>x</tt> in {@link #mousePress(MouseEvent)}
+     * @param  y  The local variable <tt>y</tt> in {@link #mousePress(MouseEvent)}
+     */
+    private void clickedAllYears(final int x, final int y)
+    {
+	if (y < 0)
 	    if (x < 0)
 	    {
-		final boolean selected;
-		if (y < 0)
+		final boolean selected = (this.m_selected[0] & 1) != 0;
+		for (int i = 1; i < this.m_selected.length; i++)
 		{
-		    selected = (this.m_selected[z] & (1 << 12) - 1) == (1 << 12) - 1;
-		    for (int i = z1; i < z2; i++)
-			this.m_selected[i] = (short)(selected ? 0 : (1 << 12) - 1);
+		    this.m_selected[i] = (short)(selected ? (1 << 12) - 1 : 0);
+		    for (int j = 0; j < this.selected[i].length; j++)
+			this.selected[i][j] = (short)(selected ? (1 << 12) - 1 : 0);
 		}
-		else
-		{
-		    selected = (this.m_selected[z] & 1 << y) != 0;
-		    for (int i = z1; i < z2; i++)
-			this.m_selected[i] ^= 1 << y;
-		}
-		for (int j = z1; j < z2; j++)
-		    for (int i = 0, n = this.selected[j].length; i < n; i++)
-			if (y < 0)
-			    if (selected)
-				this.selected[j][i] = 0;
-			    else
-				this.selected[j][i] |= (1 << 12) - 1;
-			else
-			    if (selected)
-				this.selected[j][i] &= ~(1 << y);
-			    else
-				this.selected[j][i] |= 1 << y;
-		this.repaint();
 	    }
-	    else if (x < this.selected[z].length)
+	    else
 	    {
-		int m1 = -1, m2 = -2;
-		if (y < 0)
-		    if (this.selected[z][x] == (1 << 12) - 1)
-			for (int i = z1; i < z2; i++)
-			    this.selected[i][x] = this.m_selected[i] = 0;
+		final boolean selected = (this.selected[0][x] & 1) != 0;
+		for (int i = 1; i < this.m_selected.length; i++)
+		    this.selected[i][x] = (short)(selected ? (1 << 12) - 1 : 0);
+		if (selected == false)
+		    fixEnds();
+		for (int i = 1; i < this.m_selected.length; i++)
+		{
+		    short m = ~0;
+		    for (int j = 0; j < this.selected[i].length; j++)
+			m &= this.selected[i][j];
+		    this.m_selected[i] = m;
+		}
+	    }
+	else
+	    if (x < 0)
+	    {
+		final boolean selected = (this.m_selected[0] & (1 << y)) != 0;
+		for (int i = 1; i < this.m_selected.length; i++)
+		{
+		    for (int j = 0; j < this.selected[i].length; j++)
+			if (selected)
+			    this.selected[i][j] |= 1 << y;
+			else
+			    this.selected[i][j] &= ~(1 << y);
+		    if (selected)
+			this.m_selected[i] |= 1 << y;
+		    else
+			this.m_selected[i] &= ~(1 << y);
+		}
+		if (selected == false)
+		    fixEnds();
+	    }
+	    else
+	    {
+		final boolean selected = (this.selected[0][x] & (1 << y)) != 0;
+		for (int i = 1; i < this.m_selected.length; i++)
+		    if (selected)
+		    {
+			this.selected[i][x] |= 1 << y;
+			short m = ~0;
+			for (int j = 0; j < this.selected[i].length; j++)
+			    m &= this.selected[i][j];
+			this.m_selected[i] |= m & 1 << y;
+		    }
 		    else
 		    {
-			for (int i = z1; i < z2; i++)
-			    this.selected[i][x] = (1 << 12) - 1;
-			m1 = 0;
-			m2 = 11;
-		    }
-		else if ((this.selected[z][x] & (1 << (m1 = m2 = y))) != 0)
-		    for (int i = z1; i < z2; i++)
 			this.selected[i][x] &= ~(1 << y);
-		else
-		    for (int i = z1; i < z2; i++)
-			this.selected[i][x] |= 1 << y;
-		if (m2 >= m1)
-		{
-		    for (int i = z1; i < z2; i++)
-		    {
-			leapYearFix(i);
-			for (int m = 0; m < 12; m++)
-			    for (int d = DAYS[m]; d < this.selected[i].length; d++)
-				this.selected[i][d] |= 1 << m;
+			this.m_selected[i] &= ~(1 << y);
 		    }
-		    for (int i = z1; i < z2; i++)
-			for (int m = 1 << m1; m <= 1 << m2; m <<= 1)
-			{
-			    int count = 0, n = this.selected[i].length;
-			    for (int day = 0; day < n; day++)
-				if ((this.selected[i][day] & m) == m)
-				    count++;
-			    this.m_selected[i] = (short)((this.m_selected[i] & ~m) | (count == n ? m : 0));
-			}
-		}
-		this.repaint();
 	    }
+    }
+    
+    /**
+     * Toggle dates within the hovered year
+     * 
+     * @param  x  The local variable <tt>x</tt> in {@link #mousePress(MouseEvent)}
+     * @param  y  The local variable <tt>y</tt> in {@link #mousePress(MouseEvent)}
+     * @param  z  The local variable <tt>z</tt> in {@link #mousePress(MouseEvent)}
+     */
+    private void clickYear(int x, int y, int z)
+    {
+	if (x < 0)
+	{
+	    final boolean selected;
+	    if (y < 0)
+	    {
+		selected = (this.m_selected[z] & (1 << 12) - 1) == (1 << 12) - 1;
+		this.m_selected[z] = (short)(selected ? 0 : (1 << 12) - 1);
+	    }
+	    else
+	    {
+		selected = (this.m_selected[z] & 1 << y) != 0;
+		this.m_selected[z] ^= 1 << y;
+	    }
+	    for (int i = 0, n = this.selected[z].length; i < n; i++)
+		if (y < 0)
+		    if (selected)
+			this.selected[z][i] = 0;
+		    else
+			this.selected[z][i] |= (1 << 12) - 1;
+		else
+		    if (selected)
+			this.selected[z][i] &= ~(1 << y);
+		    else
+			this.selected[z][i] |= 1 << y;
+	}
+	else
+	{
+	    int m1 = -1, m2 = -2;
+	    if (y < 0)
+		if (this.selected[z][x] == (1 << 12) - 1)
+		    this.selected[z][x] = this.m_selected[z] = 0;
+		else
+		{
+		    this.selected[z][x] = (1 << 12) - 1;
+		    m1 = 0;
+		    m2 = 11;
+		}
+	    else
+		this.selected[z][x] ^= 1 << (m1 = m2 = y);
+	    if (m2 >= m1)
+		for (int m = 1 << m1; m <= 1 << m2; m <<= 1)
+		{
+		    int count = 0, n = this.selected[z].length;
+		    for (int day = 0; day < n; day++)
+			if ((this.selected[z][day] & m) == m)
+			    count++;
+		    this.m_selected[z] = (short)((this.m_selected[z] & ~m) | (count == n ? m : 0));
+		}
+	}
+    }
+    
+    /**
+     * Set all days outside the each month's range as selected
+     */
+    private void fixEnds()
+    {
+	for (int i = 0; i < this.m_selected.length; i++)
+	{
+	    leapYearFix(i);
+	    for (int m = 0; m < 12; m++)
+		for (int d = DAYS[m]; d < this.selected[i].length; d++)
+		    this.selected[i][d] |= 1 << m;
 	}
     }
     
