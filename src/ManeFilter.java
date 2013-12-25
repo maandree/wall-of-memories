@@ -59,13 +59,34 @@ public class ManeFilter extends JPanel
 		    { new PadPane(GAP, GAP),
 		    },
 		    { new JLabel("Active filters: "),
-		      new JTextField("years and months and days and hours"),
+		      new JTextField("years and months and days and hours and categories and people"),
 		      new JButton("Apply"),
+		    },
+		    { new PadPane(GAP, GAP),
+		    },
+		    { new JLabel("Format (conjunctive): "),
+		      new JButton("Landscape"),
+		      new JButton("Portrait"),
+		    },
+		    { new PadPane(GAP, GAP),
+		    },
+		    { new JLabel("Format (disjunctive): "),
+		      new JButton("Landscape"),
+		      new JButton("Portrait"),
+		    },
+		    { new PadPane(GAP, GAP),
+		    },
+		    { new JLabel("Title (regex): "),
+		      new JTextField(),
+		      new JButton("Add (or)"),
+		      new JButton("Add (and)"),
 		    },
 		};
 	
 	comps[2][1].setMinimumSize(comps[2][1].getPreferredSize());
 	comps[2][1].setPreferredSize(new Dimension(0, comps[2][1].getPreferredSize().height));
+	comps[8][1].setMinimumSize(new Dimension(200, comps[8][1].getPreferredSize().height));
+	comps[8][1].setPreferredSize(new Dimension(0, comps[8][1].getPreferredSize().height));
 	
 	int total_width = 0;
 	int total_height = 2 * MARGIN;

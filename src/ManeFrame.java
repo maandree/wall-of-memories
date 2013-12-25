@@ -43,28 +43,23 @@ public class ManeFrame extends JFrame
 							JScrollPane.  VERTICAL_SCROLLBAR_ALWAYS,
 							JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 	
-	final JScrollPane years_scroll  = new JScrollPane(new YearFilter(),
-							  JScrollPane.  VERTICAL_SCROLLBAR_AS_NEEDED,
-							  JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-	final JScrollPane months_scroll = new JScrollPane(new MonthFilter(),
-							  JScrollPane.  VERTICAL_SCROLLBAR_AS_NEEDED,
-							  JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-	final JScrollPane days_scroll   = new JScrollPane(new DayFilter(),
-							  JScrollPane.  VERTICAL_SCROLLBAR_AS_NEEDED,
-							  JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-	final JScrollPane hours_scroll  = new JScrollPane(new HourFilter(),
-							  JScrollPane.  VERTICAL_SCROLLBAR_AS_NEEDED,
-							  JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-	final JScrollPane filter_scroll = new JScrollPane(new ManeFilter(),
-							  JScrollPane.  VERTICAL_SCROLLBAR_AS_NEEDED,
-							  JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+	final Object[][] bottom_tab_contents =
+	        {
+		    {"Years",      new YearFilter()},
+		    {"Months",     new MonthFilter()},
+		    {"Days",       new DayFilter()},
+		    {"Hours",      new HourFilter()},
+		    {"Categories", new CategoryFilter()},
+		    {"People",     new PersonFilter()},
+		    {"Filter",     new ManeFilter()},
+		};
 	
 	final JTabbedPane bottom_tabs = new JTabbedPane(JTabbedPane.BOTTOM, JTabbedPane.SCROLL_TAB_LAYOUT);
-	bottom_tabs.add("Years",   years_scroll);
-	bottom_tabs.add("Months", months_scroll);
-	bottom_tabs.add("Days",     days_scroll);
-	bottom_tabs.add("Hours",   hours_scroll);
-	bottom_tabs.add("Filter", filter_scroll);
+	for (final Object[] bottom_tab_content : bottom_tab_contents)
+	    bottom_tabs.add((String)(bottom_tab_content[0]),
+			    new JScrollPane((JComponent)(bottom_tab_content[1]),
+					    JScrollPane.  VERTICAL_SCROLLBAR_AS_NEEDED,
+					    JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED));
 	
 	left_scroll.setBorder(null);
 	top_scroll.setBorder(null);
