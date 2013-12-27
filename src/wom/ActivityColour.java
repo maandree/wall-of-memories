@@ -40,29 +40,29 @@ public class ActivityColour
     /**
      * Colours for activity boxes in normal state
      */
-    public static ActivityColour normal = new ActivityColour(85);
+    public static ActivityColour normal = new ActivityColour(Settings.getInt("ui.activity.hue.normal.idle"));
     
     /**
      * Colours for activity boxes in normal state but hovered
      */
-    public static ActivityColour normal_hover = new ActivityColour(85 + 50);
+    public static ActivityColour normal_hover = new ActivityColour(Settings.getInt("ui.activity.hue.normal.hover"));
     
     /**
      * Colours for activity boxes in selected state
      */
-    public static ActivityColour selected = new ActivityColour(285);
+    public static ActivityColour selected = new ActivityColour(Settings.getInt("ui.activity.hue.selected.idle"));
     
     /**
      * Colours for activity boxes in selected state and hovered
      */
-    public static ActivityColour selected_hover = new ActivityColour(285 - 50);
+    public static ActivityColour selected_hover = new ActivityColour(Settings.getInt("ui.activity.hue.selected.hover"));
     
     
     
     /**
      * Cache for already calculated colours
      */
-    private Color[] cache = new Color[1024];
+    private Color[] cache = new Color[Settings.getInt("ui.activity.cache.levels")];
     
     /**
      * The hue of the colours
@@ -79,18 +79,18 @@ public class ActivityColour
      */
     public Color get(final double activity)
     {
-	int descrete = (int)(activity * 1023);
+	int descrete = (int)(activity * (cache.length - 1));
 	if (descrete < 0)
 	    descrete = 0;
-	if (descrete > 1023)
-	    descrete = 1023;
+	if (descrete > (cache.length - 1))
+	    descrete = (cache.length - 1);
 	
 	if (this.cache[descrete] != null)
 	    return this.cache[descrete];
 	
-	double x = descrete / 1024.;
-	double lum = 0.75 - 0.20 * x;
-	double sat = 0.025 + 0.475 * x;
+	double x = descrete / (double)(cache.length);
+	double lum = Settings.getDouble("ui.activity.lum.m") + Settings.getDouble("ui.activity.lum.k") * x;
+	double sat = Settings.getDouble("ui.activity.sat.m") + Settings.getDouble("ui.activity.sat.k") * x;
 	return this.cache[descrete] = (new Colour(lum, sat, this.hue)).srgb;
     }
     

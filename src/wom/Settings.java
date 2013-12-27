@@ -86,6 +86,15 @@ public class Settings
 	configurations.put(THUMBNAIL_DIRECTORY, HOME + "/.cache/wall-of-memories/thumbnails");
 	configurations.put(TRANSFER_METHOD, "copy");
 	configurations.put(PICTURE_GROUP, "");
+	configurations.put("ui.activity.hue.normal.idle", "85");
+	configurations.put("ui.activity.hue.normal.hover", "135");
+	configurations.put("ui.activity.hue.selected.idle", "285");
+	configurations.put("ui.activity.hue.selected.hover", "235");
+	configurations.put("ui.activity.cache.levels", "1024");
+	configurations.put("ui.activity.lum.m", "0.75");
+	configurations.put("ui.activity.lum.k", "-0.20");
+	configurations.put("ui.activity.sat.m", "0.025");
+	configurations.put("ui.activity.sat.k", "0.475");
 	
 	boolean have = false;
 	File file_;
@@ -197,6 +206,39 @@ public class Settings
 	    }
     }
     
+    
+    /**
+     * Get a string value configuration
+     * 
+     * @param   key  The key
+     * @return       The value
+     */
+    public static String getString(final String key)
+    {
+	return configurations.get(key);
+    }
+    
+    /**
+     * Get an integer value configuration
+     * 
+     * @param   key  The key
+     * @return       The value
+     */
+    public static int getInt(final String key)
+    {
+	return Integer.parseInt(configurations.get(key));
+    }
+    
+    /**
+     * Get a double precision float value configuration
+     * 
+     * @param   key  The key
+     * @return       The value
+     */
+    public static double getDouble(final String key)
+    {
+	return Double.parseDouble(configurations.get(key));
+    }
     
 }
 
