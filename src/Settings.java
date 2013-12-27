@@ -26,6 +26,28 @@ import java.util.*;
 public class Settings
 {
     /**
+     * The key for the directory for pictures
+     */
+    public static final String PICTURE_DIRECTORY = "pictures.dir";
+    
+    /**
+     * The key for the directory for picture thumbnails
+     */
+    public static final String THUMBNAIL_DIRECTORY = "thumbnails.dir";
+    
+    /**
+     * The key for the method of transferring pictures into the picture directory
+     */
+    public static final String TRANSFER_METHOD = "transfer";
+    
+    /**
+     * The key for the herd ownership of pictures
+     */
+    public static final String PICTURE_GROUP = "picture.grp";
+    
+    
+    
+    /**
      * Configuration table
      */
     public static final HashMap<String, String> configurations = new HashMap<String, String>();
@@ -40,7 +62,7 @@ public class Settings
 	final String[] files = new String[6];
 	final String $XDG_CONFIG_HOME = System.getenv("XDG_CONFIG_HOME");
 	final String $HOME = System.getenv("HOME");
-	final String HOME = System.getProperty("user.home");
+	String HOME = System.getProperty("user.home");
 	if (($XDG_CONFIG_HOME != null) && $XDG_CONFIG_HOME.length() > 0)
 	    files[0] = $XDG_CONFIG_HOME + "/wall-of-memories/womrc";
 	if (($HOME != null) && $HOME.length() > 0)
@@ -52,6 +74,16 @@ public class Settings
 	if ((HOME != null) && HOME.length() > 0)
 	    files[4] = HOME + "/.womrc";
 	files[5] = "/etc/womrc";
+	
+	if (($HOME != null) && $HOME.length() > 0)
+	    HOME = $HOME;
+	if ((HOME == null) && HOME.length() == 0)
+	    HOME = "/root";
+	
+	configurations.put(PICTURE_DIRECTORY, HOME + "/Pictures/wall-of-memories");
+	configurations.put(THUMBNAIL_DIRECTORY, HOME + "/.cache/wall-of-memories/thumbnails");
+	configurations.put(TRANSFER_METHOD, "copy");
+	configurations.put(PICTURE_GROUP, "");
 	
 	for (final String file : files)
 	    if ((file != null) && (new File(file)).exists())
@@ -79,7 +111,6 @@ public class Settings
 		    String key = null;
 		    int ptr_ = ptr = 0;
 		    for (final char c : chars)
-		    {
 			if (escape)
 			{
 			    buf[ptr_ = ptr++] = c;
@@ -128,7 +159,6 @@ public class Settings
 			    }
 			    else
 				buf[ptr_ = ptr++] = c;
-		    }
 		}
 		catch (final Throwable err)
 		{
