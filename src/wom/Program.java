@@ -33,6 +33,8 @@ public class Program
      */
     public static void main(final String... args)
     {
+	PluginHandler.restartPlugins();
+	
 	final ManeFrame frame = new ManeFrame();
 	frame.setSize(new Dimension(1733, 1300));
 	frame.setVisible(true);
