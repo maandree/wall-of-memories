@@ -87,8 +87,22 @@ public class Settings
 	configurations.put(TRANSFER_METHOD, "copy");
 	configurations.put(PICTURE_GROUP, "");
 	
+	boolean have = false;
+	File file_;
 	for (final String file : files)
-	    if ((file != null) && (new File(file)).exists())
+	    if ((file != null) && (file_ = new File(file)).exists() && (file_.isDirectory() == false))
+	    {	have = true;
+		break;
+	    }
+	if (have == false)
+	{   if ((file_ = new File("/etc/skel/.config/wall-of-memories/womrc")).exists() && (file_.isDirectory() == false))
+		FileUtil.copy("/etc/skel/.config/wall-of-memories/womrc", HOME + "/.config/wall-of-memories/womrc");
+	    else if ((file_ = new File("/etc/skel/.womrc")).exists() && (file_.isDirectory() == false))
+		FileUtil.copy("/etc/skel/.womrc", HOME + "/.womrc");
+	}
+	
+	for (final String file : files)
+	    if ((file != null) && (file_ = new File(file)).exists() && (file_.isDirectory() == false))
 	    {	InputStream is = null;
 		try
 		{   is = new FileInputStream(new File(file));
@@ -140,6 +154,14 @@ public class Settings
 				quote = c;
 			    else if ((c == '#') || (c == ';'))
 				comment = true;
+			    else if ((c == '~') && (ptr == 0))
+			    {
+				if (buf.length < HOME.length)
+				    buf = new Char[HOME.length];
+				for (final char c_ : HOME.toCharArray())
+				    buf[ptr_ = ptr++] = c_;
+				System.arraycopy(buf, 0, buf = new Char[ptr + buf.length], 0, ptr);
+			    }
 			    else if ((c == ' ') || (c == '\t'))
 			    {
 				if ((ptr != 0) && (buf[ptr - 1] != ' '))

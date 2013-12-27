@@ -40,16 +40,6 @@ public class PluginHandler
     
     
     /**
-     * Constructor hiding
-     */
-    private PluginHandler()
-    {
-	/* do nothing */
-    }
-    
-    
-    
-    /**
      * The plugin list file
      */
     public static String pluginFile;
@@ -104,6 +94,20 @@ public class PluginHandler
 	if (HOME             != null)  filenames.add("~/.config/%1/plugins"       .replace("~",                HOME));
 	if (HOME             != null)  filenames.add("~/.%2.plugins"              .replace("~",                HOME));
 	filenames.add("/etc/%2.plugins");
+	
+	boolean have = false;
+	File file_;
+	for (String filename : filenames)
+	    if ((file_ = new File(filename)).exists() && (file_.isDirectory() == false))
+	    {	have = true;
+		break;
+	    }
+	if (have == false)
+	{   if ((file_ = new File("/etc/skel/.config/wall-of-memories/plugins")).exists() && (file_.isDirectory() == false))
+		FileUtil.copy("/etc/skel/.config/wall-of-memories/plugins", HOME + "/.config/wall-of-memories/plugins");
+	    else if ((file_ = new File("/etc/skel/.wom.plugins")).exists() && (file_.isDirectory() == false))
+		FileUtil.copy("/etc/skel/.wom.plugins", HOME + "/.wom.plugins");
+	}
 	
 	for (String filename : filenames)
 	{   final File file = new File(filename = filename.replace("%1", "wall-of-memories").replace("%2", "wom"));
@@ -240,7 +244,7 @@ public class PluginHandler
 		final Vector<String> newFiles = new Vector<String>();
 		final HashSet<String> gotHash = new HashSet<String>();
 		
-		for (final String line : readFile(pluginFile).replace('\f', '\n').replace('\t', ' ').split("\n"))
+		for (final String line : FileUtil.readFile(pluginFile).replace('\f', '\n').replace('\t', ' ').split("\n"))
 		{   if ((line.length() == 0) || line.replace(" ", "").startsWith("#") || line.replace(" ", "").startsWith(";"))
 			continue;
 		    if (pluginHash.contains(line) == false)
@@ -286,60 +290,6 @@ public class PluginHandler
 	    catch (final Throwable err)
 	    {   System.err.println("Problem with initial plug-in activation: " + err.toString());
 	}   }
-    }
-    
-    
-    /**
-     * Read a file as text
-     * 
-     * @param   file  The file
-     * @return        The text in the file
-     * 
-     * @throws  IOException  On file reading error
-     */
-    private static String readFile(final String file) throws IOException
-    {
-	final String text;
-	InputStream is = null;
-	try
-	{
-	    is = new BufferedInputStream(new FileInputStream(new File(file)));
-	    final Vector<byte[]> bufs = new Vector<byte[]>();
-	    int size = 0;
-	    
-	    for (int av; (av = is.available()) > 0;)
-	    {
-		byte[] buf = new byte[av];
-		av = is.read(buf, 0, av);
-		if (av < buf.length)
-		{
-		    final byte[] nbuf = new byte[av];
-		    System.arraycopy(buf, 0, nbuf, 0, av);
-		    buf = nbuf;
-		}
-		size += av;
-		bufs.add(buf);
-	    }
-	    
-	    final byte[] full = new byte[size];
-	    int ptr = 0;
-	    for (final byte[] buf : bufs)
-	    {
-		System.arraycopy(buf, 0, full, ptr, buf.length);
-		ptr += buf.length;
-	    }
-	    
-	    text = new String(full, "UTF-8");
-	}
-	finally
-	{   if (is != null)
-		try
-		{   is.close();
-		}
-		catch (final Throwable ignore)
-		{   /* ignore */
-	}       }
-	return text;
     }
     
 }
