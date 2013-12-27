@@ -105,7 +105,7 @@ public class Settings
 			    break;
 			ptr += n;
 		    }
-		    char[] chars = (new String(data, 0, ptr, "UTF-8") + "\n").toCharArray();
+		    char[] chars = (new String(data, 0, ptr, "UTF-8").replace('\f', '\n') + "\n").toCharArray();
 		    boolean comment = false;
 		    boolean escape = false;
 		    char quote = 0;
@@ -146,7 +146,7 @@ public class Settings
 				quote = c;
 			    else if ((c == '#') || (c == ';'))
 				comment = true;
-			    else if (c == ' ')
+			    else if ((c == ' ') || (c == '\t'))
 			    {
 				if ((ptr != 0) && (buf[ptr - 1] != ' '))
 				{
