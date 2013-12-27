@@ -89,16 +89,13 @@ public class Settings
 	
 	for (final String file : files)
 	    if ((file != null) && (new File(file)).exists())
-	    {
-		InputStream is = null;
+	    {	InputStream is = null;
 		try
-		{
-		    is = new FileInputStream(new File(file));
+		{   is = new FileInputStream(new File(file));
 		    byte[] data = new byte[8192];
 		    int ptr = 0;
 		    for (;;)
-		    {
-			if (ptr == data.length)
+		    {	if (ptr == data.length)
 			    System.arraycopy(data, 0, data = new byte[data.length << 1], 0, ptr);
 			final int n = is.read(data, ptr, data.length - ptr);
 			if (n <= 0)
@@ -114,8 +111,7 @@ public class Settings
 		    int ptr_ = ptr = 0;
 		    for (final char c : chars)
 			if (escape)
-			{
-			    buf[ptr_ = ptr++] = c;
+			{   buf[ptr_ = ptr++] = c;
 			    escape = false;
 			}
 			else if (c == quote)
@@ -127,13 +123,11 @@ public class Settings
 				buf[ptr_ = ptr++] = c;
 			else if (c == '\n')
 			    if (key == null)
-			    {
-				configurations.put((new String(buf, 0, ptr_)).replace("\0", ""), "yes");
+			    {	configurations.put((new String(buf, 0, ptr_)).replace("\0", ""), "yes");
 				ptr_ = ptr = 0;
 			    }
 			    else
-			    {
-				configurations.put(key, (new String(buf, 0, ptr_)).replace("\0", ""));
+			    {	configurations.put(key, (new String(buf, 0, ptr_)).replace("\0", ""));
 				ptr_ = ptr = 0;
 				key = null;
 			    }
@@ -149,8 +143,7 @@ public class Settings
 			    else if ((c == ' ') || (c == '\t'))
 			    {
 				if ((ptr != 0) && (buf[ptr - 1] != ' '))
-				{
-				    ptr_ = ptr;
+				{   ptr_ = ptr;
 				    buf[ptr++] = ' ';
 				}
 			    }
@@ -163,21 +156,16 @@ public class Settings
 				buf[ptr_ = ptr++] = c;
 		}
 		catch (final Throwable err)
-		{
-		    err.printStackTrace(System.err);
+		{   err.printStackTrace(System.err);
 		}
 		finally
-		{
-		    if (is != null)
+		{   if (is != null)
 			try
-			{
-			    is.close();
+			{   is.close();
 			}
 			catch (final Throwable ignore)
-			{
-			    /* ignore */
-			}
-		}
+			{   /* ignore */
+		}	}
 		break;
 	    }
     }
