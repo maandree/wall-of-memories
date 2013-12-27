@@ -16,23 +16,26 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-import javax.swing.*;
+package wom;
+
 import java.awt.*;
 
 
 /**
- * Padding pane
+ * Mane class of the program
  */
-@SuppressWarnings("serial")
-public class PadPane extends JPanel
+public class Program
 {
     /**
-     * Constructor
+     * Mane function of the program
+     * 
+     * @param  args  Command line, excluding the zeroth argument
      */
-    public PadPane(final int horizontal, final int vertical)
+    public static void main(final String... args)
     {
-	this.setPreferredSize(new Dimension(horizontal, vertical));
-	this.setOpaque(false);
+	final ManeFrame frame = new ManeFrame();
+	frame.setSize(new Dimension(1733, 1300));
+	frame.setVisible(true);
     }
     
 }
