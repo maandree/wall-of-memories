@@ -229,6 +229,7 @@ public class Colour
 	
         return toStandard(r, g, b);
     }
+    
     /**
      * Gaussian elimination
      * 
