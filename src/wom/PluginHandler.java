@@ -102,11 +102,15 @@ public class PluginHandler
 	    {	have = true;
 		break;
 	    }
-	if (have == false)
-	{   if ((file_ = new File("/etc/skel/.config/wall-of-memories/plugins")).exists() && (file_.isDirectory() == false))
-		FileUtil.copy("/etc/skel/.config/wall-of-memories/plugins", HOME + "/.config/wall-of-memories/plugins");
-	    else if ((file_ = new File("/etc/skel/.wom.plugins")).exists() && (file_.isDirectory() == false))
-		FileUtil.copy("/etc/skel/.wom.plugins", HOME + "/.wom.plugins");
+	try
+	{   if (have == false)
+	    {   if ((file_ = new File("/etc/skel/.config/wall-of-memories/plugins")).exists() && (file_.isDirectory() == false))
+		    FileUtil.copy("/etc/skel/.config/wall-of-memories/plugins", HOME + "/.config/wall-of-memories/plugins");
+		else if ((file_ = new File("/etc/skel/.wom.plugins")).exists() && (file_.isDirectory() == false))
+		    FileUtil.copy("/etc/skel/.wom.plugins", HOME + "/.wom.plugins");
+	}   }
+	catch (final Throwable err)
+	{   err.printStackTrace(System.err);
 	}
 	
 	for (String filename : filenames)

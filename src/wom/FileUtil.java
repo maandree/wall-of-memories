@@ -41,8 +41,8 @@ public class FileUtil
 	OutputStream os = null;
 	try
 	{
-	    is = new FileInputStream (new File(file));
-	    os = new FileOutputStream(new File(file));
+	    is = new FileInputStream (new File(source));
+	    os = new FileOutputStream(new File(destination));
 	    byte[] data = new byte[8192];
 	    
 	    for (;;)
